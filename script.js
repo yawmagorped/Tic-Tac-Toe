@@ -45,6 +45,8 @@ function gameController() {
     
     let gameboard = gameBoard();
     let board = gameboard.getBoard();
+    let isGameOver = false;
+    const isThisGameOver = () => isGameOver;
 
     let activePlayer = firstPlayer;
     const getActivePlayer = () => activePlayer;
@@ -53,17 +55,19 @@ function gameController() {
         activePlayer = activePlayer === firstPlayer ? secondPlayer : firstPlayer;
     }
     const playNewRound = (row, column) => {
-        selectedCell = gameboard.selectCell(row, column);
-        
-        if(!selectedCell.isCellEmpty())
-            return false;
-
-        selectedCell.markCell(activePlayer.token);
-        if(checkLogic())
-            endGame(activePlayer);
-        switchActivePlayer();
-        //printBoard();
-        return true;
+        if(!isGameOver) {
+            selectedCell = gameboard.selectCell(row, column);
+            
+            if(!selectedCell.isCellEmpty())
+                return false;
+    
+            selectedCell.markCell(activePlayer.token);
+            if(checkLogic())
+                isGameOver = true;
+            switchActivePlayer();
+            //printBoard();
+            return true;
+        } else return false;
     }
 
     // const printBoard = () => {
@@ -90,7 +94,7 @@ function gameController() {
         }
         for (let i = 0; i < rows; i++) {
             let counter = 0;
-            for (let j = 1; j < columns - 1; j++) {
+            for (let j = 1; j < columns; j++) {
                 if (!(board[j][i].isCellEmpty()) && board[j][i].getValue() == board[j-1][i].getValue())
                     counter++;
             }
@@ -106,28 +110,47 @@ function gameController() {
         return false;
     }
 
-    const endGame = (player) => {
-        // console.log(`${player.playerName} won!!`);
-    }
-
-    return {playNewRound, endGame, getActivePlayer};
+    return {playNewRound, isThisGameOver, getActivePlayer};
 }
 
 
 
 function screenController() {
-    let game = gameController();
-
-    let buttons = document.querySelectorAll("button");
-    let activePlayer = game.getActivePlayer();
-
+    let game;
+    let buttons = document.querySelectorAll(".board-container button");
+    let resetbutton = document.querySelector(".body-container > button");
+    let playerNameTxt = document.querySelector(".top > :first-child");
+    let winTxt = document.querySelector(".top > :last-child");
+    let activePlayer;
+    initializeGame();
+    
     let boardContainer = document.querySelector(".board-container")
     
+    resetbutton.addEventListener('click', initializeGame);
+
+    function initializeGame() {
+        console.log("sdf");
+        game = gameController();
+        activePlayer = game.getActivePlayer()
+        buttons.forEach(btn => {
+            btn.textContent = "";
+            btn.dataset.isMarked = "";
+            winTxt.textContent = "";
+            playerNameTxt.textContent = activePlayer.playerName;
+        });
+    }
+
     boardContainer.addEventListener('click', (e) => {
         if(e.target.dataset.column != undefined) {
             if(game.playNewRound(e.target.dataset.row, e.target.dataset.column)) {
                 markButton(e.target, activePlayer.playerMark);
-                activePlayer = game.getActivePlayer();
+                if(game.isThisGameOver()) {
+                    showEndGameScreen();
+                } else {
+                    activePlayer = game.getActivePlayer();
+                    playerNameTxt.textContent = activePlayer.playerName;
+                }
+                
             }
         }
     });
@@ -135,17 +158,21 @@ function screenController() {
     boardContainer.addEventListener('mouseover', e => {
         let button = e.target.closest('button');
         if (!button) { return; }
-        if(!(button.dataset.isMarked))
+        if(button.dataset.isMarked == "")
             button.textContent = activePlayer.playerMark;
     });
     
     boardContainer.addEventListener('mouseout', e => {
         let button = e.target.closest('button');
         if (!button) { return; }
-        console.log(!(button.dataset.isMarked) );
-        if(!(button.dataset.isMarked))
+        if(button.dataset.isMarked == "")
             button.textContent = "";
     });
+
+
+    const showEndGameScreen = () => {
+        winTxt.textContent = "won!!!";
+    }
 
     const markButton = (btn, mark) => {
         btn.textContent = mark;

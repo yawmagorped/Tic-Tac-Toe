@@ -5,15 +5,33 @@
 
 body {
     background-color: gray;
+    height: 100vh;
+    display: grid;
+    place-content: center;
 }
-button {
+
+.body-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.top {
+    font-size: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 16px;
+}
+
+.board-container button {
     font-size: 3rem;
 }
 
+.body-container > button {
+    font-size: 2rem;
+}
+
 .board-container {
-    height: 100vh;
     display: grid;
     grid-template-columns: 100px 100px 100px;
     grid-template-rows: 100px 100px 100px;
-    place-content: center;
 }
