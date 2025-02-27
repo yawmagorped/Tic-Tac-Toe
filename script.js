@@ -1,12 +1,15 @@
-const columns = 3;
-const rows = 3;
+const Dimensions = (() => {
+    const columns = 3;
+    const rows = 3;
+    return {columns, rows};
+})();
 
 function gameBoard() {
     let board = [];
 
-    for (let i = 0; i < rows; i++) {
+    for (let i = 0; i < Dimensions.rows; i++) {
         board[i] = [];
-        for (let j = 0; j < columns; j++) {
+        for (let j = 0; j < Dimensions.columns; j++) {
             board[i].push(cell());
         }
     }
@@ -72,8 +75,8 @@ function gameController() {
 
     // const printBoard = () => {
     //     console.log(`Board\n`);
-    //     for (let i = 0; i < rows; i++) {
-    //         for (let j = 0; j < columns; j++) {
+    //     for (let i = 0; i < Dimensions.rows; i++) {
+    //         for (let j = 0; j < Dimensions.columns; j++) {
     //             console.log(`${board[i][j].getValue()}`);
     //         }
     //         console.log("\n");
@@ -82,8 +85,8 @@ function gameController() {
 
     const checkLogic = () => {
         let counter = 0;
-        for (let i = 0; i < rows; i++) {
-            for (let j = 1; j < columns; j++) {
+        for (let i = 0; i < Dimensions.rows; i++) {
+            for (let j = 1; j < Dimensions.columns; j++) {
                 if (!(board[i][j].isCellEmpty()) && board[i][j].getValue() == board[i][j-1].getValue())
                     counter++;
             }
@@ -92,9 +95,9 @@ function gameController() {
             else 
                 counter = 0;
         }
-        for (let i = 0; i < rows; i++) {
+        for (let i = 0; i < Dimensions.rows; i++) {
             let counter = 0;
-            for (let j = 1; j < columns; j++) {
+            for (let j = 1; j < Dimensions.columns; j++) {
                 if (!(board[j][i].isCellEmpty()) && board[j][i].getValue() == board[j-1][i].getValue())
                     counter++;
             }
