@@ -118,23 +118,28 @@ function gameController() {
 
 
 
-function screenController() {
-    let game;
-    let buttons = document.querySelectorAll(".board-container button");
-    let resetbutton = document.querySelector(".body-container > button");
-    let playerNameTxt = document.querySelector(".top > :first-child");
-    let winTxt = document.querySelector(".top > :last-child");
-    let activePlayer;
-    initializeGame();
-    
-    let boardContainer = document.querySelector(".board-container")
-    
-    resetbutton.addEventListener('click', initializeGame);
+let game;
+let buttons = document.querySelectorAll(".board-container button");
+let resetbutton = document.querySelector(".body-container > button");
+let playerNameTxt = document.querySelector(".top > :first-child");
+let winTxt = document.querySelector(".top > :last-child");
+let activePlayer;
 
-    function initializeGame() {
-        console.log("sdf");
-        game = gameController();
-        activePlayer = game.getActivePlayer()
+let boardContainer = document.querySelector(".board-container")
+
+resetbutton.addEventListener('click', initializeGame);
+let screenCntrl = screenController();
+
+function initializeGame() {
+    game = gameController();
+    activePlayer = game.getActivePlayer()
+    screenCntrl.init();
+}
+
+initializeGame();
+
+function screenController() {
+    const init = () => {
         buttons.forEach(btn => {
             btn.textContent = "";
             btn.dataset.isMarked = "";
@@ -181,5 +186,5 @@ function screenController() {
         btn.textContent = mark;
         btn.dataset.isMarked = true;
     }
+    return {init}
 }
-screenController();
